@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,11 +9,13 @@
   <link rel="stylesheet" href="../css/index.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <script>
   function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
     return {
       registro: params.get('registro'),
+      login: params.get('login'),
       usuario: params.get('usuario'),
       nombre: params.get('nombre'),
       apellido: params.get('apellido'),
@@ -21,16 +24,33 @@
   }
 
   function mostrarSweetAlert() {
-    const { registro, usuario,nombre, apellido, correo } = getQueryParams();
+    const { registro, login, usuario, nombre, apellido, correo } = getQueryParams();
+
     if (registro === 'exitoso') {
       Swal.fire({
         title: '¡Registro exitoso!',
-        html: `Bienvenido/a <strong>${nombre} ${apellido}</strong><br>Tu correo registrado es: <strong>${correo}</strong>
-        y nombre de usuario es: <strong>${usuario}</strong>`,
+        html: `Bienvenido/a <strong>${nombre} ${apellido}</strong><br>Tu correo registrado es: <strong>${correo}</strong><br>Nombre de usuario: <strong>${usuario}</strong>`,
         icon: 'success',
         confirmButtonText: 'Aceptar'
       }).then(() => {
-        // Limpia la URL después de cerrar el modal
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    }else if (login === 'exitoso') {
+      Swal.fire({
+        title: '¡Inicio de sesión exitoso!',
+        html: `Bienvenido/a de nuevo <strong>${nombre} ${apellido}</strong><br>Correo: <strong>${correo}</strong><br>Usuario: <strong>${usuario}</strong>`,
+        icon: 'success',
+        confirmButtonText: 'Continuar'
+      }).then(() => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    }else if (login === 'fallido') {
+      Swal.fire({
+        title: 'Error de inicio de sesión',
+        text: 'Correo/usuario o contraseña incorrectos. Intenta nuevamente.',
+        icon: 'error',
+        confirmButtonText: 'Reintentar'
+      }).then(() => {
         window.history.replaceState({}, document.title, window.location.pathname);
       });
     }
@@ -38,6 +58,7 @@
 
   window.onload = mostrarSweetAlert;
 </script>
+
 
 <body>
   <header>
@@ -63,30 +84,32 @@
       <div class="form-columns register-field">
         <div class="column">
           <input type="text" placeholder="Nombre de usuario" name="user">
-          <input type="text" placeholder="Nombre(s)" name="name"  />
+          <input type="text" placeholder="Nombre(s)" name="name" />
           <input type="text" placeholder="Primer apellido" name="lastName" />
-          <input type="text" placeholder="Segundo apellido" name="secondLastName"  />
+          <input type="text" placeholder="Segundo apellido" name="secondLastName" />
           <input type="email" placeholder="Correo" name="email" />
         </div>
         <div class="column">
-          <input type="password" placeholder="Contraseña" name="password"  />
-          <input type="tel" placeholder="Teléfono" pattern="[0-9]{10}" title="Ingresa un número de 10 dígitos" name="phone" />
+          <input type="password" placeholder="Contraseña" name="password" />
+          <input type="tel" placeholder="Teléfono" pattern="[0-9]{10}" title="Ingresa un número de 10 dígitos"
+            name="phone" />
           <label for="membershipType">Tipo de membresía:</label>
-          <select id="membershipType" name="membershipType" >
+          <select id="membershipType" name="membershipType">
             <option value="" disabled selected>Selecciona una opción</option>
             <option value="basica">Normal</option>
             <option value="premium">Platino</option>
             <option value="vip">Diamante</option>
           </select>
           <label for="paymentMethod">Método de pago (tarjeta):</label>
-          <input type="text" id="paymentMethod" placeholder="Número de tarjeta" pattern="[0-9]{16}" title="Número de tarjeta de 16 dígitos" name="paymentMethod"  />
+          <input type="text" id="paymentMethod" placeholder="Número de tarjeta" pattern="[0-9]{16}"
+            title="Número de tarjeta de 16 dígitos" name="paymentMethod" />
         </div>
       </div>
 
       <!-- Campos de inicio de sesión -->
       <div class="login-field" style="display: none;">
-        <input type="email" placeholder="Correo o nombre de usuario" name="emailL"  />
-        <input type="password" placeholder="Contraseña" name="passwordL"  />
+        <input type="text" placeholder="Correo o nombre de usuario" name="emailL" />
+        <input type="password" placeholder="Contraseña" name="passwordL" />
       </div>
 
       <button type="submit">Enviar</button>
@@ -150,4 +173,5 @@
 
   <script src="../script/scripts.js"></script>
 </body>
+
 </html>
