@@ -19,45 +19,82 @@
       usuario: params.get('usuario'),
       nombre: params.get('nombre'),
       apellido: params.get('apellido'),
+      logout: params.get('logout'), 
       correo: params.get('correo')
     };
   }
 
   function mostrarSweetAlert() {
-    const { registro, login, usuario, nombre, apellido, correo } = getQueryParams();
+  const { registro, login, logout, usuario, nombre, apellido, correo } = getQueryParams();
 
-    if (registro === 'exitoso') {
-      Swal.fire({
-        title: '¡Registro exitoso!',
-        html: `Bienvenido/a <strong>${nombre} ${apellido}</strong><br>Tu correo registrado es: <strong>${correo}</strong><br>Nombre de usuario: <strong>${usuario}</strong>`,
-        icon: 'success',
-        confirmButtonText: 'Aceptar'
-      }).then(() => {
-        window.history.replaceState({}, document.title, window.location.pathname);
+  if (registro === 'exitoso') {
+    Swal.fire({
+      title: '¡Registro exitoso!',
+      html: `Bienvenido/a <strong>${nombre} ${apellido}</strong><br>Tu correo registrado es: <strong>${correo}</strong><br>Nombre de usuario: <strong>${usuario}</strong>`,
+      icon: 'success',
+      confirmButtonText: 'Aceptar'
+    }).then(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    });
+  } else if (login === 'exitoso') {
+    Swal.fire({
+      title: '¡Inicio de sesión exitoso!',
+      html: `Bienvenido/a de nuevo <strong>${nombre} ${apellido}</strong><br>Correo: <strong>${correo}</strong><br>Usuario: <strong>${usuario}</strong>`,
+      icon: 'success',
+      confirmButtonText: 'Continuar'
+    }).then(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    });
+  } else if (login === 'fallido') {
+    Swal.fire({
+      title: 'Error de inicio de sesión',
+      text: 'Correo/usuario o contraseña incorrectos. Intenta nuevamente.',
+      icon: 'error',
+      confirmButtonText: 'Reintentar'
+    }).then(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    });
+  } else if (logout === 'exitoso') {
+    Swal.fire({
+      title: 'Sesión cerrada',
+      text: 'Has cerrado sesión exitosamente.',
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
+    }).then(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    });
+  }
+}
+
+
+  function verificarSesion() {
+    fetch('../php/session_status.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          const loginLink = document.getElementById('loginLink');
+          loginLink.innerHTML = `
+            <span class="login-text"><strong>${data.usuario}</strong></span>
+            <div class="user-icon">👤</div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <a href="historial.html">Historial</a>
+              <a href="../php/cerrar_sesion.php">Cerrar sesión</a>
+            </div>
+          `;
+          loginLink.classList.add('logged-in');
+          loginLink.onclick = () => {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+          };
+        }
       });
-    }else if (login === 'exitoso') {
-      Swal.fire({
-        title: '¡Inicio de sesión exitoso!',
-        html: `Bienvenido/a de nuevo <strong>${nombre} ${apellido}</strong><br>Correo: <strong>${correo}</strong><br>Usuario: <strong>${usuario}</strong>`,
-        icon: 'success',
-        confirmButtonText: 'Continuar'
-      }).then(() => {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      });
-    }else if (login === 'fallido') {
-      Swal.fire({
-        title: 'Error de inicio de sesión',
-        text: 'Correo/usuario o contraseña incorrectos. Intenta nuevamente.',
-        icon: 'error',
-        confirmButtonText: 'Reintentar'
-      }).then(() => {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      });
-    }
   }
 
-  window.onload = mostrarSweetAlert;
+  window.onload = () => {
+    mostrarSweetAlert();
+    verificarSesion();
+  };
 </script>
+
 
 
 <body>

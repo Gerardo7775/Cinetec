@@ -16,14 +16,14 @@ function toggleAuthMode() {
 //comentario gg
   if (isRegistering) {
     title.textContent = "Registro";
-    form.setAttribute("action", "../php/conection.php");
+    form.setAttribute("action", "../php/create.php");
     registerFields.forEach(field => field.style.display = "block");
     loginFields.forEach(field => field.style.display = "none");
     document.querySelector('[name="emailL"]').removeAttribute('required');
     document.querySelector('[name="passwordL"]').removeAttribute('required');
   } else {
     title.textContent = "Iniciar Sesión";
-    form.setAttribute("action", "../php/conection.php");
+    form.setAttribute("action", "../php/create.php");
     registerFields.forEach(field => field.style.display = "none");
     loginFields.forEach(field => field.style.display = "block");
     document.querySelector('[name="email"]').removeAttribute('required');
