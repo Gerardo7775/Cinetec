@@ -23,7 +23,7 @@ function toggleAuthMode() {
     document.querySelector('[name="passwordL"]').removeAttribute('required');
   } else {
     title.textContent = "Iniciar Sesión";
-    form.setAttribute("action", "#");
+    form.setAttribute("action", "../php/conection.php");
     registerFields.forEach(field => field.style.display = "none");
     loginFields.forEach(field => field.style.display = "block");
     document.querySelector('[name="email"]').removeAttribute('required');
