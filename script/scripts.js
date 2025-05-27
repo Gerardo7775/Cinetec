@@ -13,7 +13,7 @@ function toggleAuthMode() {
   const loginFields = document.querySelectorAll(".login-field");
 
   isRegistering = !isRegistering;
-
+//comentario gg
   if (isRegistering) {
     title.textContent = "Registro";
     form.setAttribute("action", "../php/conection.php");
