@@ -1,18 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CINETEC</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="../css/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<script>
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      registro: params.get('registro'),
+      usuario: params.get('usuario'),
+      nombre: params.get('nombre'),
+      apellido: params.get('apellido'),
+      correo: params.get('correo')
+    };
+  }
+
+  function mostrarSweetAlert() {
+    const { registro, usuario,nombre, apellido, correo } = getQueryParams();
+    if (registro === 'exitoso') {
+      Swal.fire({
+        title: '¡Registro exitoso!',
+        html: `Bienvenido/a <strong>${nombre} ${apellido}</strong><br>Tu correo registrado es: <strong>${correo}</strong>
+        y nombre de usuario es: <strong>${usuario}</strong>`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        // Limpia la URL después de cerrar el modal
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    }
+  }
+
+  window.onload = mostrarSweetAlert;
+</script>
 
 <body>
-
   <header>
     <div class="header-left">
       <img id="logo" src="../img/LogoCineFBDOscuro.png" alt="Logo CINETEC" />
@@ -20,54 +47,67 @@
         <strong><span class="cine">Cine</span><span class="te">TEC</span><span class="ch">H</span></strong>
       </h1>
     </div>
-
     <div class="user-menu-container" id="userMenuContainer">
       <div class="login-link" onclick="toggleAuthPanel()" id="loginLink">
         <span class="login-text"><strong>Iniciar Sesión</strong></span>
         <div class="user-icon">👤</div>
       </div>
-
-
-      <div class="user-logged" id="userLogged" style="display: none;">
-        <span id="userName" class="user-name" onclick="toggleUserDropdown()">Usuario</span>
-        <div class="user-icon" onclick="toggleUserDropdown()">👤</div>
-        <div id="userDropdown" class="user-dropdown">
-          <a href="#" onclick="showHistory('boletos')">Historial de boletos</a>
-          <a href="#" onclick="showHistory('alimentos')">Historial de alimentos</a>
-          <a href="#" onclick="logout()">Cerrar sesión</a>
-        </div>
-      </div>
-
     </div>
-
-
   </header>
 
   <div class="auth-panel" id="authPanel">
-    <form class="auth-form" id="authForm">
-      <h3 id="formTitle">Iniciar Sesión</h3>
-      <input type="email" placeholder="Correo" required />
-      <input type="password" placeholder="Contraseña" required />
-      <button type="submit">Entrar</button>
-      <small onclick="toggleAuthMode()">¿No tienes cuenta? <strong>Regístrate</strong></small>
+    <form class="auth-form" id="authForm" action="../php/create.php" method="POST">
+      <h3 id="formTitle">Registro</h3>
+
+      <!-- Campos de registro -->
+      <div class="form-columns register-field">
+        <div class="column">
+          <input type="text" placeholder="Nombre de usuario" name="user">
+          <input type="text" placeholder="Nombre(s)" name="name"  />
+          <input type="text" placeholder="Primer apellido" name="lastName" />
+          <input type="text" placeholder="Segundo apellido" name="secondLastName"  />
+          <input type="email" placeholder="Correo" name="email" />
+        </div>
+        <div class="column">
+          <input type="password" placeholder="Contraseña" name="password"  />
+          <input type="tel" placeholder="Teléfono" pattern="[0-9]{10}" title="Ingresa un número de 10 dígitos" name="phone" />
+          <label for="membershipType">Tipo de membresía:</label>
+          <select id="membershipType" name="membershipType" >
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="basica">Normal</option>
+            <option value="premium">Platino</option>
+            <option value="vip">Diamante</option>
+          </select>
+          <label for="paymentMethod">Método de pago (tarjeta):</label>
+          <input type="text" id="paymentMethod" placeholder="Número de tarjeta" pattern="[0-9]{16}" title="Número de tarjeta de 16 dígitos" name="paymentMethod"  />
+        </div>
+      </div>
+
+      <!-- Campos de inicio de sesión -->
+      <div class="login-field" style="display: none;">
+        <input type="email" placeholder="Correo o nombre de usuario" name="emailL"  />
+        <input type="password" placeholder="Contraseña" name="passwordL"  />
+      </div>
+
+      <button type="submit">Enviar</button>
+      <small onclick="toggleAuthMode()">¿Ya tienes una cuenta? <strong>Inicia sesión</strong></small>
     </form>
   </div>
-
   <h2>Tendencias</h2>
   <div class="custom-carousel" id="customCarousel">
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <a href="../php/funcion.php?pelicula_buscar=12457"><img src="../img/destinoFinalHorizontal.jpg" alt="Póster 1"></a>
+        <a href="funcion.html"><img src="../img/destinoFinalHorizontal.jpg" alt="Póster 1"></a>
       </div>
       <div class="carousel-item">
-        <a href="../php/funcion.php?pelicula_buscar=75314"><img src="../img/minecraftHorizontal.jpg" alt="Póster 2"></a>
+        <a href="funcion.html"><img src="../img/minecraftHorizontal.jpg" alt="Póster 2"></a>
       </div>
       <div class="carousel-item">
-        <a href="../php/funcion.php?pelicula_buscar=25467"><img src="../img/dragonHorizontal.jpg" alt="Póster 3">
+        <a href="funcion.html"><img src="../img/dragonHorizontal.jpg" alt="Póster 3">
         </a>
       </div>
       <div class="carousel-item">
-        <a href="../php/funcion.php?pelicula_buscar=68795"><img src="../img/screamHorizontal.jpg" alt="Póster 4"></a>
+        <a href="funcion.html"><img src="../img/screamHorizontal.jpg" alt="Póster 4"></a>
       </div>
     </div>
     <button class="carousel-control prev" onclick="prevSlide()">❮</button>
@@ -78,12 +118,12 @@
     <div class="category-carousel">
       <h2>Terror</h2>
       <div class="carousel">
-        <a href="../php/funcion.php?pelicula_buscar=12457">
+        <a href="funcion.html?id=12457">
           <div class="poster" style="background-image: url('../img/destinoFinalVertical.jpg')">
           </div>
           <div class="poster-title">Destino Final: Legado de Sangre</div>
         </a>
-        <a href="../php/funcion.php?pelicula_buscar=68795">
+        <a href="funcion.html?id=68795">
           <div class="poster" style="background-image: url('../img/screamVertical.jpg')">
           </div>
           <div class="poster-title">Scream VI</div>
@@ -94,11 +134,11 @@
     <div class="category-carousel">
       <h2>Aventura</h2>
       <div class="carousel">
-        <a href="../php/funcion.php?pelicula_buscar=75314">
+        <a href="funcion.html?id=75314">
           <div class="poster" style="background-image: url('../img/minecraftVertical.jpg')"></div>
           <div class="poster-title">Minecraft: La Película</div>
         </a>
-        <a href="../php/funcion.php?pelicula_buscar=25467">
+        <a href="funcion.html?id=25467">
           <div class="poster" style="background-image: url('../img/dragonVertical.jpg')">
           </div>
           <div class="poster-title">Cómo Entrenar a tu Dragón</div>
@@ -108,208 +148,6 @@
   </div>
 
 
-  <script>
-    const authPanel = document.getElementById("authPanel");
-    const authForm = document.getElementById("authForm");
-    const formTitle = document.getElementById("formTitle");
-
-    let isRegistering = false;
-
-    function toggleAuthPanel() {
-      if (authPanel.style.top === "0%") {
-        authPanel.style.top = "-80%";
-      } else {
-        authPanel.style.top = "0%";
-      }
-    }
-
-    function toggleAuthMode() {
-      isRegistering = !isRegistering;
-      formTitle.innerText = isRegistering ? "Registro" : "Iniciar Sesión";
-
-      if (isRegistering) {
-        authForm.innerHTML = `
-      <h3 id="formTitle">Registro</h3>
-      <div class="form-columns"> 
-        <div class="column">
-          <form action="../php/create.php" method="POST">
-      <input type="text" placeholder="Nombre(s)" name = "name" required />
-      <input type="text" placeholder="Primer apellido" name = "lastName" required />
-      <input type="text" placeholder="Segundo apellido" name = "secondLastName" required />
-      <input type="email" placeholder="Correo" name = "email" required />
-
-           </div>
-    <div class="column">
-            <input type="password" placeholder="Contraseña" name = "password" required />
-      <input type="tel" placeholder="Teléfono" pattern="[0-9]{10}" title="Ingresa un número de 10 dígitos" name = "phone" required />
-
-
-      <label for="membershipType" style="color:white; font-size:14px;">Tipo de membresía:</label>
-      <select id="membershipType" name = "membershipType" required>
-        <option value="" disabled selected>Selecciona una opción</option>
-        <option value="basica">Normal</option>
-        <option value="premium">Platino</option>
-        <option value="vip">Diamante</option>
-      </select>
-      <label for="paymentMethod" style="color:white; font-size:14px; margin-bottom: 10px; display: inline-block;">Método de pago (tarjeta):</label>
-<input type="text" id="paymentMethod" placeholder="Número de tarjeta" pattern="[0-9]{16}" title="Número de tarjeta de 16 dígitos" required style="margin-top: 4px;" name="paymentMethod" />
-
-       </div>
-  </div>
-      <button type="submit">Registrarse</button>
-      </form>
-      <small onclick="toggleAuthMode()">
-        ¿Ya tienes una cuenta? <Strong>Inicia sesión</Strong>
-      </small>
-    `;
-      } else {
-        authForm.innerHTML = `
-      <h3 id="formTitle">Iniciar Sesión</h3>
-      <input type="email" placeholder="Correo" required name="email"/>
-      <input type="password" placeholder="Contraseña" required name="password"/>
-      <button type="submit">Entrar</button>
-      <small onclick="toggleAuthMode()">
-        ¿No tienes cuenta? <Strong>Regístrate</Strong>
-      </small>
-    `;
-      }
-    }
-
-    /*Carrusel principal*/
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.carousel-item');
-    const totalSlides = slides.length;
-
-    function updateCarousel() {
-      const carouselInner = document.querySelector('.carousel-inner');
-      carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
-    }
-
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % totalSlides;
-      updateCarousel();
-    }
-
-    function prevSlide() {
-      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-      updateCarousel();
-    }
-
-    // Auto-play
-    setInterval(() => {
-      nextSlide();
-    }, 4000);
-
-    // menú usuario
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const loginLink = document.getElementById("loginLink");
-      const userLogged = document.getElementById("userLogged");
-      const userName = document.getElementById("userName");
-
-      // Simular login
-      authForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const inputs = authForm.querySelectorAll("input");
-        const email = inputs[0].value;
-        const name = isRegistering ? inputs[0].value : email.split("@")[0];
-
-        localStorage.setItem("loggedInUser", name);
-        updateUserUI();
-        toggleAuthPanel();
-      });
-
-      // Mostrar/ocultar el menú desplegable
-      window.toggleUserDropdown = function () {
-        const dropdown = document.getElementById("userDropdown");
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-      }
-
-      // Cerrar sesión
-      window.logout = function () {
-        localStorage.removeItem("loggedInUser");
-        updateUserUI();
-      }
-
-      // Actualiza el UI según el estado de sesión
-      function updateUserUI() {
-        const user = localStorage.getItem("loggedInUser");
-        if (user) {
-          loginLink.style.display = "none";
-          userLogged.style.display = "flex";
-          userName.textContent = user;
-        } else {
-          loginLink.style.display = "flex";
-          userLogged.style.display = "none";
-          userName.textContent = "";
-        }
-      }
-
-      updateUserUI(); // al cargar la página
-    });
-
-
-    // Cierra el menú si se hace clic fuera
-    document.addEventListener("click", function (event) {
-      const dropdown = document.getElementById("userDropdown");
-      const userLogged = document.getElementById("userLogged");
-
-      if (!userLogged.contains(event.target)) {
-        dropdown.style.display = "none";
-      }
-    });
-
-    // // Datos simulados del historial (puedes reemplazar con datos reales)
-    const sampleTickets = [
-      { pelicula: "Función: Minecraft: La Película, ", ID_Sala: "Sala 1, ", ID_Boleto: "ID Boleto: 01, ", asiento: "Asiento: A1, ", price: "Precio: $70, ", date: "Fecha: 2025/05/10" },
-      { pelicula: "Función: Scream VI, ", ID_Sala: "Sala 2, ", ID_Boleto: "ID Boleto: 02, ", asiento: "Asiento: A1, ", price: "Precio: $70, ", date: "Fecha: 2025/05/10" },
-    ];
-
-    const sampleSnacks = [
-      { item: "Item: Combo Palomitas + Refresco, ", price: "Precio: $149, ", date: "Fecha: 2025/05/10" },
-      { item: "Item: Hot Dog, ", price: "Precio: $45, ", date: "Fecha: 2025/05/17" },
-    ];
-
-    // Función para mostrar el modal
-    function showHistory(type) {
-      const modal = document.getElementById("historyModal");
-      const title = document.getElementById("modalTitle");
-      const list = document.getElementById("historyList");
-
-      // Definir contenido basado en tipo
-      const data = type === 'boletos' ? sampleTickets : sampleSnacks;
-      title.textContent = `Historial de ${type === 'boletos' ? 'boletos' : 'alimentos'}`;
-
-      // Limpiar y rellenar el listado
-      list.innerHTML = '';
-      data.forEach(entry => {
-        const li = document.createElement("li");
-        li.style.marginBottom = "10px";
-        li.textContent = `${entry.item} - ${entry.price} - ${entry.date}`;
-        list.appendChild(li);
-      });
-
-      modal.style.display = "flex";
-    }
-
-    // Función para cerrar el modal
-    function closeModal() {
-      document.getElementById("historyModal").style.display = "none";
-    }
-
-  </script>
-  <!-- Modal genérico para historial -->
-  <div id="historyModal"
-    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:999; justify-content:center; align-items:center;">
-    <div
-      style="background:white; color:black; padding:20px; border-radius:10px; width:80%; max-width:600px; max-height:80vh; overflow-y:auto; position:relative;">
-      <h2 id="modalTitle">Historial</h2>
-      <ul id="historyList" style="list-style:none; padding:0;"></ul>
-      <button onclick="closeModal()"
-        style="margin-top:15px; background-color:#e72222; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Cerrar</button>
-    </div>
-  </div>
-
+  <script src="../script/scripts.js"></script>
 </body>
-
 </html>

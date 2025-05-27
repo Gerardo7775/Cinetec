@@ -1,48 +1,62 @@
 <?php
+include("conection.php");
 
-$server_name = "hr";
-$server_pass = "hr";
-$server_conn_str = "localhost/XEPDB1"; 
+// Recoger datos del formulario
+$name = $_POST['name'];
+$user = $_POST['user'];
+$lastName = $_POST['lastName'];
+$secondLastName = $_POST['secondLastName'];
+$email = $_POST['email'];
+$password = $_POST['password'];
+$phone = $_POST['phone'];
+$paymentMethod = (int)$_POST['paymentMethod'];
+$membershipType = $_POST['membershipType'];
+$membershipTypeId = null;
 
-$conn = oci_connect($server_name, $server_pass, $server_conn_str);
-
-if (!$conn) {
-    $e = oci_error();
-    die("Error de conexión: " . $e['message']);
-} else{
-    echo "Conexión exitosa a la base de datos Oracle.<br>";
+if ($membershipType === "Básica") {
+    $membershipTypeId = 1;
+} elseif ($membershipType === "Premium") {
+    $membershipTypeId = 2;
+} elseif ($membershipType === "VIP") {
+    $membershipTypeId = 3;
 }
 
-    $name = $_POST['name'];
-    $lastName = $_POST['lastName'];
-    $secondLastName = $_POST['secondLastName'];
-    $email = $_POST['email'];
-    // $password = $_POST['password'];
-    $phone = $_POST['phone'];
-    $paymentMethod = $_POST['paymentMethod'];
-    $membershipType = $_POST['membershipType'];
+// Consulta SQL con nombres de parámetros válidos
+$sql = 'INSERT INTO CLIENTE
+(NOMBRE_USUARIO, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, CORREO, TELEFONO, METODO_PAGO, ID_MEMBRESIA, CONTRASENIA) 
+VALUES (:u, :n, :ap, :am, :c, :t, :mp, :idm, :pw)';
 
-    $sql = 'INSERT INTO CLIENTE (ID_CLIENTE,NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, CORREO, TELEFONO, METODO_PAGO, ID_MEMBRESIA) VALUES ( 25431,name, :lastName, :secondLastName, :email, :phone, :paymentMethod, :membershipType)';
-    $stid = oci_parse($conn, $sql);
+$stid = oci_parse($conn, $sql);
 
-    oci_bind_by_name($stid, ':name', $name);
-    oci_bind_by_name($stid, ':lastName', $lastName);
-    oci_bind_by_name($stid, ':secondLastName', $secondLastName);
-    oci_bind_by_name($stid, ':email', $email);
-    // oci_bind_by_name($stid, ':password', $password);
-    oci_bind_by_name($stid, ':phone', $phone);
-    oci_bind_by_name($stid, ':paymentMethod', $paymentMethod);
-    oci_bind_by_name($stid, ':membershipType', $membershipType);
+// Enlazar parámetros
+oci_bind_by_name($stid, ':u', $user);
+oci_bind_by_name($stid, ':n', $name);
+oci_bind_by_name($stid, ':ap', $lastName);
+oci_bind_by_name($stid, ':am', $secondLastName);
+oci_bind_by_name($stid, ':c', $email);
+oci_bind_by_name($stid, ':t', $phone);
+oci_bind_by_name($stid, ':mp', $paymentMethod);
+oci_bind_by_name($stid, ':idm', $membershipTypeId);
+oci_bind_by_name($stid, ':pw', $password);
 
-    $result = oci_execute($stid);
+// Ejecutar
+$result = oci_execute($stid);
 
-    if ($result) {
-        echo "Cliente creado exitosamente.";
-    } else {
-        $e = oci_error($stid);
-        echo "Error al crear el cliente: " . $e['message'];
-    }
+if ($result) {
+    $params = http_build_query([
+        'registro' => 'exitoso',
+        'usuario' => $user,
+        'nombre' => $name,
+        'apellido' => $lastName,
+        'correo' => $email
+    ]);
+    header("Location: ../html/index.html?$params");
+    exit();
+} else {
+    $e = oci_error($stid);
+    echo "Error al crear el cliente: " . $e['message'];
+}
 
-    oci_free_statement($stid);
-    oci_close($conn);
+oci_free_statement($stid);
+oci_close($conn);
 ?>
