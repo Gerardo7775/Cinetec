@@ -5,7 +5,7 @@ function toggleAuthPanel() {
   const panel = document.getElementById("authPanel");
   panel.style.top = panel.style.top === "0%" ? "-80%" : "0%";
 }
-
+//ahora si
 function toggleAuthMode() {
   const form = document.getElementById("authForm");
   const title = document.getElementById("formTitle");
